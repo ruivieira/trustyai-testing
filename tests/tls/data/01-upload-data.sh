@@ -6,4 +6,4 @@ echo "Using ${MODEL_ROUTE}"
 
 
 curl -kv -H "Authorization: Bearer ${TOKEN}" \
-  -H "Content-Type: application/json" ${MODEL_ROUTE}:8008/infer -d ./@input-data-small.json
+  -H "Content-Type: application/json" ${MODEL_ROUTE}/infer -d ./@input-data-small.json
