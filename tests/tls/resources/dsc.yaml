@@ -29,7 +29,7 @@ spec:
         manifests:
           - contextDir: config
             sourcePath: 'overlays/testing'
-            uri: https://api.github.com/repos/ruivieira/trustyai-service-operator/tarball/test/tls
+            uri: https://api.github.com/repos/ruivieira/trustyai-service-operator/tarball/RHOAIENG-10876
       managementState: Managed
     ray:
       managementState: Removed

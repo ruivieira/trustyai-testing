@@ -8,3 +8,6 @@ data:
     modelMeshImage:
       name: quay.io/ruimvieira/modelmesh
       tag: tls
+    tls:
+      secretName: trustyai-certificate
+      clientAuth: optional
