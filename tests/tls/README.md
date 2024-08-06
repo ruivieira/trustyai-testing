@@ -85,6 +85,12 @@ stringData:
 EOF
 ```
 
+You must now configure ModelMesh and apply
+
+```shell
+oc apply -f resources/model-serving-config.yaml -n $NS
+```
+
 Deploy the model
 ```shell
  oc apply -f resources/ovms-1.x.yaml -n $NS
