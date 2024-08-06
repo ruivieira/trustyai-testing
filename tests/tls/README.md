@@ -23,8 +23,9 @@ Create a PKCS8 secret according to the [ModelMesh instructions](https://github.c
 This secret will setup both MM and TrustyAI encryption.
 
 ```shell
-NS="opendatahub"  # the controller namespace where ModelMesh Serving was deployed
-SECRET_NAME="trustyai-certificate"
+export NS="opendatahub"  # the controller namespace where ModelMesh Serving was deployed
+export SECRET_NAME="trustyai-certificate"
+export TRUSTYAI_SERVICE="trustyai-service"
 ```
 Create an OpenSSL configuration file named `openssl-san.config`.
 The TrustyAI service name **must** match the value provided below. For instance, if creating a TrustyAI service called
@@ -34,7 +35,7 @@ cat > openssl-san.config << EOF
 [ req ]
 distinguished_name = req
 [ san ]
-subjectAltName = DNS:modelmesh-serving.${NS},DNS:localhost,IP:0.0.0.0,DNS:${TRUSTYAI_SERVICE}.${NS}.svc
+subjectAltName = DNS:modelmesh-serving.${PROJ_NS},DNS:localhost,IP:0.0.0.0,DNS:${TRUSTYAI_SERVICE}.${PROJ_NS}.svc
 EOF
 ```
 Use the following command to create a SAN key/cert:
@@ -52,17 +53,16 @@ From there, you can create a secret using the generated certificate and key:
 
 ```shell
 kubectl apply -f - <<EOF
----
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: ${NAMESPACE}
+  namespace: ${NS}
   name: ${SECRET_NAME}
 type: kubernetes.io/tls
-stringData:
-  tls.crt: $(cat server.crt)
-  tls.key: $(cat server.key)
-  ca.crt: $(cat server.crt)
+data:
+  tls.crt: $(cat server.crt | base64 | tr -d '\n')
+  tls.key: $(cat server.key | base64 | tr -d '\n')
+  ca.crt: $(cat server.crt | base64 | tr -d '\n')
 EOF
 ```
 
@@ -78,10 +78,10 @@ metadata:
   namespace: ${PROJ_NS}
   name: ${SECRET_NAME}
 type: kubernetes.io/tls
-stringData:
-  tls.crt: $(cat server.crt)
-  tls.key: $(cat server.key)
-  ca.crt: $(cat server.crt)
+data:
+  tls.crt: $(cat server.crt | base64 | tr -d '\n')
+  tls.key: $(cat server.key | base64 | tr -d '\n')
+  ca.crt: $(cat server.crt | base64 | tr -d '\n')
 EOF
 ```
 
@@ -93,17 +93,33 @@ oc apply -f resources/model-serving-config.yaml -n $NS
 
 Deploy the model
 ```shell
- oc apply -f resources/ovms-1.x.yaml -n $NS
- oc apply -f resources/model-housing.yaml -n {{ODH_NS}}
+oc patch namespace $PROJ_NS -p '{"metadata":{"labels":{"modelmesh-enabled":"true"}}}'
+oc apply -f resources/storage-config.yaml -n $PROJ_NS
+oc apply -f resources/ovms-1.x.yaml -n $PROJ_NS
+oc apply -f resources/mlserver-1.x.yaml -n $PROJ_NS
+oc apply -f resources/model-housing.yaml -n $PROJ_NS
 
+```
+
+Create a route to ModelMesh
+
+```shell
+oc apply -f resources/mm-route.yaml -n $PROJ_NS
 ```
 
 ### Install TrustyAI
 
 1. Install a TrustyAI service
    ```shell
-    oc apply -f resources/trustyai-cr.yaml -n $NS
+    oc apply -f resources/trustyai-cr.yaml -n $PROJ_NS
    ```
+
+### Data
+
+Populate with some data
+```shell
+sh ./data/01-upload-data.sh
+```
    
 ## Validation
 
