@@ -1,0 +1,6 @@
+{
+  "data": {
+    "logger": "{\n    \"image\" : \"quay.io/opendatahub/kserve-agent:v0.12.1.6\",\n    \"memoryRequest\": \"100Mi\",\n    \"memoryLimit\": \"1Gi\",\n    \"cpuRequest\": \"100m\",\n    \"cpuLimit\": \"1\",\n    \"defaultUrl\": \"http://default-broker\",\n    \"caBundle\": \"logger-tls\",\n    \"caCertFile\": \"service-ca.crt\"\n}",
+    "storageInitializer": "{\n    \"image\" : \"quay.io/opendatahub/kserve-storage-initializer:v0.12.1.6\",\n    \"memoryRequest\": \"100Mi\",\n    \"memoryLimit\": \"1Gi\",\n    \"cpuRequest\": \"100m\",\n    \"cpuLimit\": \"1\",\n    \"caBundleConfigMapName\": \"\",\n    \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n    \"cpuModelcar\": \"10m\",\n    \"memoryModelcar\": \"15Mi\",\n    \"enableDirectPvcVolumeMount\": true,\n    \"enableModelcar\": true\n}"
+  }
+}
