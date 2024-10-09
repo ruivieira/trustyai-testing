@@ -178,3 +178,4 @@ oc apply -f resources/trustyai-cr.yaml -n test
 ## Notes
 
 * Remember to delete the entire namespace between runs, to ensure no left-overs (config maps, etc) are left behind.
+* ⚠️ Sometimes, even after deleting and creating a new `inferenceservice-config`, the DSC will still install the images specified in the old. The only solution is to delete the ODH operator and re-install it. 
